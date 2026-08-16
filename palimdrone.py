@@ -17,7 +17,22 @@ class Solution:
             endHalf = xStr[(len(xStr)//2)+1:len(xStr)]
             return firstHalf == endHalf[::-1]
             
-    
+    def isPalindromeNumber(self, x: int) -> bool:
+        # Negative numbers aren't palindromes.
+        # A number ending in 0 can't be one unless it is 0.
+        if x < 0 or (x % 10 == 0 and x != 0):
+            return False
+
+        reversed_half = 0
+
+        while x > reversed_half:
+            digit = x % 10
+            reversed_half = reversed_half * 10 + digit
+            x //= 10
+
+        # Even digits: 1221 -> 12 == 12
+        # Odd digits: 12321 -> 12 == 123 // 10
+        return x == reversed_half or x == reversed_half // 10
     
     
     
@@ -26,7 +41,7 @@ class Solution:
     
 if __name__ == '__main__':
     sol = Solution()
-    if (sol.isPalindrome(5655565)):
+    if (sol.isPalindromeNumber(5655565)):
         print( "True" )
     else:
         print( "False" )
