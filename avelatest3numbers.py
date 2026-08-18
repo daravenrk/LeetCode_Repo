@@ -1,37 +1,35 @@
+from collections import deque
+class RollingAverage:
+    """Track the average of the latest values in constant time."""
 
-def averageOfThree(li: list):
-    if(len(li) == 3):
-        return (sum(li) / 3)
-    else:
-        listLength = len(li)
-        raise ValueError(f"List length is not 3 it is {listLength}")
-    
-def addNumber( li: list, num: int):
-    if (len(li) > 2):
-        li.append(num)
-        li.pop(0)
-    elif(len(li) < 2):
-        li.append(num)
-    else:
-        listLength = len(li)
-        raise ValueError(f"List length is not 3 or less; it is {listLength}")
+    def __init__(self, window_size: int) -> None:
+        if not isinstance(window_size, int) or isinstance(window_size, bool):
+            raise TypeError("window_size must be an integer")
+        if window_size <= 0:
+            raise ValueError("window_size must be greater than 0")
 
-def test(runningSet, streamList):
-    average = averageOfThree(runningSet) 
-    print(str(runningSet) + " Average = " + str(average))
-    addNumber(runningSet, streamList[0])
-    average = averageOfThree(runningSet)
-    print(str(runningSet) + " Average = " + str(average))
-    
-if __name__ == '__main__':
-    # handle the problem setup
-    testList0 = []
-    testList1 = [1,2,3]
-    testList2 = [4,5,6,7]
-    
+        self.window_size = window_size
+        self.numbers: deque[float] = deque()
+        self.total = 0.0
+
+    def add_number(self, number: float) -> float:
+        if not isinstance(number, (int, float)) or isinstance(number, bool):
+            raise TypeError("number must be numeric")
+
+        if len(self.numbers) == self.window_size:
+            self.total -= self.numbers.popleft()
+
+        self.numbers.append(number)
+        self.total += number
+        return self.total / len(self.numbers)
+
+
+if __name__ == "__main__":
     try:
-        test(testList1, testList2)
-        
-    except ValueError as e:
-        print(e)
-    
+        rolling_average = RollingAverage(window_size=3)
+
+        for number in [1, 2, 3, 4, 5, 6, 7]:
+            average = rolling_average.add_number(number)
+            print(f"{list(rolling_average.numbers)} Average = {average}")
+    except (TypeError, ValueError) as error:
+        print(f"Error: {error}")
